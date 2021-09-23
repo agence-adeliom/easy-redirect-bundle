@@ -1,0 +1,19 @@
+easy_redirect:
+  redirect: redirection
+  redirects: Redirections
+  not_found: Lien non trouvé
+  not_founds: Liens non trouvés
+  edit_redirect: Modifier la redirection
+  new_redirect: Nouvelle redirection
+  manage_redirects: Gérer les redirections
+  create_redirection: Créer une redirection
+  form:
+    count: Utilisation
+    lastAccessed: Dernier accès
+    source: Source
+    destination: Destination
+    status: Code de status
+    path: Chemin
+    fullUrl: URL complète
+    referer: URL référente
+    timestamp: Date

@@ -1,0 +1,18 @@
+parameters:
+  easy_redirect.not_found_manager.class: Adeliom\EasyRedirectBundle\Service\NotFoundManager
+  easy_redirect.not_found_listener.class: Adeliom\EasyRedirectBundle\EventListener\CreateNotFoundListener
+
+services:
+
+  easy_redirect.not_found_manager:
+    class: "%easy_redirect.not_found_manager.class%"
+    arguments:
+      - '%easy_redirect.not_found_class%'
+      - '@easy_redirect.entity_manager'
+
+  easy_redirect.not_found_listener:
+    class: "%easy_redirect.not_found_listener.class%"
+    arguments:
+      - '@easy_redirect.not_found_manager'
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
