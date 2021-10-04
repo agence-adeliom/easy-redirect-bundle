@@ -19,8 +19,7 @@ composer require agence-adeliom/easy-redirect-bundle
 
 ## Documentation
 
-TODO
-
+[Check it here](doc/index.md)
 
 ## License
 
