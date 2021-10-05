@@ -18,9 +18,62 @@ Install with composer
 composer require agence-adeliom/easy-redirect-bundle
 ```
 
+### Setup database
+
+#### Using doctrine migrations
+
+```bash
+php bin/console doctrine:migration:diff
+php bin/console doctrine:migration:migrate
+```
+
+#### Without
+
+```bash
+php bin/console doctrine:schema:update --force
+```
+
 ## Documentation
 
-[Check it here](doc/index.md)
+### Manage redirect in your Easyadmin dashboard
+
+Go to your dashboard controller, example : `src/Controller/Admin/DashboardController.php`
+
+```php
+<?php
+
+namespace App\Controller\Admin;
+
+...
+use Adeliom\EasyRedirectBundle\Admin\EasyRedirectTrait;
+
+class DashboardController extends AbstractDashboardController
+{
+    ...
+    use EasyRedirectTrait;
+
+    ...
+    public function configureMenuItems(): iterable
+    {
+        ...
+        yield from $this->configRedirectEntry();
+
+        ...
+```
+
+### Configuration
+
+```yaml
+# config/packages/easy_redirect.yaml
+easy_redirect:
+    redirect_class:     ~ # Required and must be an instance of "Adeliom\EasyRedirectBundle\Entity\Redirect"
+    not_found_class:    ~ # Required and must be an instance of "Adeliom\EasyRedirectBundle\Entity\NotFound"
+    model_manager_name: ~ # If a custom model manager is used by default its 'default'
+
+    # When enabled, when a redirect is updated or created, the NotFound entites with a matching path are removed.
+    remove_not_founds: true
+```
+
 
 ## License
 
