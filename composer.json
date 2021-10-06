@@ -1,6 +1,7 @@
 {
     "name": "agence-adeliom/easy-redirect-bundle",
     "type": "symfony-bundle",
+    "version": "1.0.0",
     "description": "Symfony redirection bundle for EasyAdmin",
     "keywords": ["symfony", "redirection", "easyadmin"],
     "homepage": "https://github.com/agence-adeliom/easy-redirect-bundle",
