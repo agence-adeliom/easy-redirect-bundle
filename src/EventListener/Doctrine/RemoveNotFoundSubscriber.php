@@ -20,7 +20,7 @@ class RemoveNotFoundSubscriber implements EventSubscriber
         $this->notFoundManager = $notFoundManager;
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             'postPersist',

@@ -42,8 +42,7 @@ class EasyRedirectExtension extends Extension
         }
     }
 
-
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'easy_redirect';
     }

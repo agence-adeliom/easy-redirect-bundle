@@ -14,10 +14,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('easy_redirect');
         $rootNode    = $treeBuilder->getRootNode();
@@ -28,18 +25,14 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('redirect_class')
                     ->defaultNull()
                     ->validate()
-                        ->ifTrue(function($value) {
-                            return !\is_subclass_of($value, 'Adeliom\EasyRedirectBundle\Entity\Redirect');
-                        })
+                        ->ifTrue(fn($value) => !\is_subclass_of($value, 'Adeliom\EasyRedirectBundle\Entity\Redirect'))
                         ->thenInvalid('"redirect_class" must be an instance of "Adeliom\EasyRedirectBundle\Entity\Redirect"')
                     ->end()
                 ->end()
                 ->scalarNode('not_found_class')
                     ->defaultNull()
                     ->validate()
-                        ->ifTrue(function($value) {
-                            return !\is_subclass_of($value, 'Adeliom\EasyRedirectBundle\Entity\NotFound');
-                        })
+                        ->ifTrue(fn($value) => !\is_subclass_of($value, 'Adeliom\EasyRedirectBundle\Entity\NotFound'))
                         ->thenInvalid('"not_found_class" must be an instance of "Adeliom\EasyRedirectBundle\Entity\NotFound"')
                     ->end()
                 ->end()
