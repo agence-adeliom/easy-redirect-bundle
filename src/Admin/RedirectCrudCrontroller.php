@@ -12,11 +12,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 
 abstract class RedirectCrudCrontroller extends AbstractCrudController
 {
-    private AdminContextProvider $adminContextProvider;
-
-    public function __construct(AdminContextProvider $adminContextProvider)
+    public function __construct(private AdminContextProvider $adminContextProvider)
     {
-        $this->adminContextProvider = $adminContextProvider;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -33,7 +30,7 @@ abstract class RedirectCrudCrontroller extends AbstractCrudController
             ]);
     }
 
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): object
     {
         $context = $this->adminContextProvider->getContext();
         $request = $context->getRequest();

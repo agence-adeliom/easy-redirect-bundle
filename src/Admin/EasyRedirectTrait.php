@@ -2,13 +2,18 @@
 
 namespace Adeliom\EasyRedirectBundle\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemInterface;
+use Iterator;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 trait EasyRedirectTrait
 {
-    public function configRedirectEntry(): iterable
+    /**
+     * @return Iterator<MenuItemInterface>
+     */
+    public function configRedirectEntry(ParameterBagInterface $parameterBag): iterable
     {
-        $parameterBag = $this->container->get("parameter_bag");
         yield MenuItem::section('easy_redirect.redirects');
         yield MenuItem::linkToCrud('easy_redirect.redirects', 'fa fa-forward', $parameterBag->get('easy_redirect.redirect_class'));
         yield MenuItem::linkToCrud('easy_redirect.not_founds', 'fa fa-unlink', $parameterBag->get('easy_redirect.not_found_class'));

@@ -2,7 +2,10 @@
 
 namespace Adeliom\EasyRedirectBundle\Admin;
 
-
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Iterator;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -10,30 +13,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use SM\Factory\Factory;
-use SM\Factory\FactoryInterface;
-use Sylius\Bundle\MoneyBundle\Formatter\MoneyFormatterInterface;
-use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
-use Sylius\Component\Core\Dashboard\DashboardStatisticsProviderInterface;
-use Sylius\Component\Core\Dashboard\SalesDataProviderInterface;
-use Sylius\Component\Core\Repository\CustomerRepositoryInterface;
-use Sylius\Component\Core\Repository\OrderRepositoryInterface;
-use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
-use Sylius\Component\Core\Repository\ShipmentRepositoryInterface;
-use Sylius\Component\Mailer\Sender\Sender;
-use Sylius\Component\Mailer\Sender\SenderInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 abstract class NotFoundCrudCrontroller extends AbstractCrudController
 {
-    private ParameterBagInterface $parameterBag;
-    private AdminUrlGenerator $adminUrlGenerator;
-
-    public function __construct(ParameterBagInterface $parameterBag, AdminUrlGenerator $adminUrlGenerator)
+    public function __construct(private ParameterBagInterface $parameterBag, private AdminUrlGenerator $adminUrlGenerator)
     {
-        $this->parameterBag = $parameterBag;
-        $this->adminUrlGenerator = $adminUrlGenerator;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -63,6 +48,9 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
         return $actions;
     }
 
+    /**
+     * @return Iterator<FieldInterface>
+     */
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new("path", "easy_redirect.form.path")->hideOnForm();
@@ -72,7 +60,7 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
     }
 
 
-    public function createRedirection(AdminContext $context)
+    public function createRedirection(AdminContext $context): RedirectResponse
     {
         if($notFound = $context->getEntity()->getInstance()){
             $redirectCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->parameterBag->get('easy_redirect.redirect_class'));
@@ -90,6 +78,9 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
         );
     }
 
+    /**
+     * @return string[]
+     */
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [

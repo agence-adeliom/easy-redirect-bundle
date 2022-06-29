@@ -13,7 +13,7 @@ abstract class NotFoundListener
      */
     public function isNotFoundException(ExceptionEvent $event)
     {
-        if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
+        if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
             return false;
         }
 

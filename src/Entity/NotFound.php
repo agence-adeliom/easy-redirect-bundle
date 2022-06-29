@@ -6,53 +6,32 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @UniqueEntity("source")
- * @ORM\MappedSuperclass()
- */
+#[UniqueEntity('source')]
+#[ORM\MappedSuperclass]
 class NotFound
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private mixed $id;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="path", type="string", length="500")
-     */
-    protected $path;
+    #[Groups('main')]
+    #[ORM\Column(name: 'path', type: 'string', length: 500)]
+    protected string $path;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="full_url", type="string", length="500")
-     */
-    protected $fullUrl;
+    #[Groups('main')]
+    #[ORM\Column(name: 'full_url', type: 'string', length: 500)]
+    protected ?string $fullUrl;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="timestamp", type="datetime")
-     */
-    protected $timestamp;
+    #[Groups('main')]
+    #[ORM\Column(name: 'timestamp', type: 'datetime')]
+    protected ?\DateTimeInterface $timestamp;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="referer", type="string", length="1000", nullable=true)
-     */
-    protected $referer;
+    #[Groups('main')]
+    #[ORM\Column(name: 'referer', type: 'string', length: 1000, nullable: true)]
+    protected ?string $referer;
 
-    /**
-     * @param string      $path
-     * @param string      $fullUrl
-     * @param string|null $referer
-     */
-    public function __construct($path, $fullUrl, $referer = null, \DateTime $timestamp = null)
+    public function __construct(string $path, string $fullUrl, ?string $referer, ?\DateTimeInterface $timestamp)
     {
         if (null === $timestamp) {
             $timestamp = new \DateTime('now');
@@ -71,42 +50,23 @@ class NotFound
         $this->timestamp = $timestamp;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): mixed
     {
         return $this->id;
     }
-
-    /**
-     * @return string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
-
-    /**
-     * @return string
-     */
-    public function getFullUrl()
+    public function getFullUrl(): string
     {
         return $this->fullUrl;
     }
-
-    /**
-     * @return \DateTime
-     */
-    public function getTimestamp()
+    public function getTimestamp(): \DateTimeInterface
     {
         return $this->timestamp;
     }
-
-    /**
-     * @return string|null
-     */
-    public function getReferer()
+    public function getReferer(): ?string
     {
         return $this->referer;
     }

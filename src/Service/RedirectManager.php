@@ -7,25 +7,14 @@ use Adeliom\EasyRedirectBundle\Entity\Redirect;
 
 class RedirectManager
 {
-    private $class;
-
-    private $em;
-
     /**
      * @param string $class The Redirect class name
      */
-    public function __construct($class, EntityManager $em)
+    public function __construct(private string $class, private EntityManager $em)
     {
-        $this->class = $class;
-        $this->em = $em;
     }
 
-    /**
-     * @param string $source
-     *
-     * @return Redirect|null
-     */
-    public function findAndUpdate($source)
+    public function findAndUpdate(string $source): ?Redirect
     {
         /** @var Redirect|null $redirect */
         $redirect = $this->em->getRepository($this->class)->findOneBy(['source' => $source]);
