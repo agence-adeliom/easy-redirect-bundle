@@ -2,44 +2,33 @@
 
 namespace Adeliom\EasyRedirectBundle\Admin;
 
-
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Iterator;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use SM\Factory\Factory;
-use SM\Factory\FactoryInterface;
-use Sylius\Bundle\MoneyBundle\Formatter\MoneyFormatterInterface;
-use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
-use Sylius\Component\Core\Dashboard\DashboardStatisticsProviderInterface;
-use Sylius\Component\Core\Dashboard\SalesDataProviderInterface;
-use Sylius\Component\Core\Repository\CustomerRepositoryInterface;
-use Sylius\Component\Core\Repository\OrderRepositoryInterface;
-use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
-use Sylius\Component\Core\Repository\ShipmentRepositoryInterface;
-use Sylius\Component\Mailer\Sender\Sender;
-use Sylius\Component\Mailer\Sender\SenderInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 abstract class NotFoundCrudCrontroller extends AbstractCrudController
 {
+    public function __construct(private ParameterBagInterface $parameterBag, private AdminUrlGenerator $adminUrlGenerator)
+    {
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
             ->setPageTitle(Crud::PAGE_INDEX, "easy_redirect.not_founds")
-            ->setPageTitle(Crud::PAGE_DETAIL, function ($entity) {
-                return $entity->getPath();
-            })
+            ->setPageTitle(Crud::PAGE_DETAIL, fn($entity) => $entity->getPath())
             ->setEntityLabelInSingular('easy_redirect.not_found')
             ->setEntityLabelInPlural('easy_redirect.not_founds')
-            ->showEntityActionsAsDropdown(false)
+            ->showEntityActionsInlined(true)
             ->setFormOptions([
                 'validation_groups' => ['Default']
             ]);
@@ -59,6 +48,9 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
         return $actions;
     }
 
+    /**
+     * @return Iterator<FieldInterface>
+     */
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new("path", "easy_redirect.form.path")->hideOnForm();
@@ -68,12 +60,12 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
     }
 
 
-    public function createRedirection(AdminContext $context)
+    public function createRedirection(AdminContext $context): RedirectResponse
     {
         if($notFound = $context->getEntity()->getInstance()){
-            $redirectCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->get(ParameterBagInterface::class)->get('easy_redirect.redirect_class'));
+            $redirectCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->parameterBag->get('easy_redirect.redirect_class'));
             return $this->redirect(
-                $this->get(AdminUrlGenerator::class)
+                $this->adminUrlGenerator
                     ->unsetAll()
                     ->setController($redirectCrud)
                     ->setAction(Action::NEW)
@@ -86,6 +78,9 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
         );
     }
 
+    /**
+     * @return string[]
+     */
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
