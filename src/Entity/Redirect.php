@@ -43,7 +43,7 @@ class Redirect
     #[ORM\Column(name: 'last_accessed', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $lastAccessed = null;
 
-    public function __construct(?string $source, ?string $destination, int $status = 301)
+    public function __construct(?string $source = null, ?string $destination = null, int $status = 301)
     {
         if ($source) {
             $this->setSource($source);

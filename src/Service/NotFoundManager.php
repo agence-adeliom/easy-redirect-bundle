@@ -13,19 +13,17 @@ class NotFoundManager
      */
     public function __construct(
         private string $class,
-        /**
-         * @readonly
-         */
         private EntityManager $em
     ) {
     }
 
     public function createFromRequest(Request $request): object
     {
-        $notFound = new $this->class($request->getPathInfo(), $request->getUri(), $request->server->get('HTTP_REFERER'));
-
-        $this->em->persist($notFound);
-        $this->em->flush();
+        if (!$notFound = $this->em->getRepository($this->class)->findBy(['path' => $request->getPathInfo()])) {
+            $notFound = new $this->class($request->getPathInfo(), $request->getUri(), $request->server->get('HTTP_REFERER'));
+            $this->em->persist($notFound);
+            $this->em->flush();
+        }
 
         return $notFound;
     }
