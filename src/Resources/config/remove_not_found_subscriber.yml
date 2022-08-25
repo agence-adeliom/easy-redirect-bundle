@@ -1,0 +1,12 @@
+parameters:
+  easy_redirect.remove_not_found_subscriber.class: Adeliom\EasyRedirectBundle\EventListener\Doctrine\RemoveNotFoundSubscriber
+
+services:
+
+  easy_redirect.remove_not_found_subscriber:
+    class: "%easy_redirect.remove_not_found_subscriber.class%"
+    arguments:
+      - '@easy_redirect.not_found_manager'
+    tags:
+      - doctrine.event_subscriber
+
