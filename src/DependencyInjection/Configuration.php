@@ -2,11 +2,10 @@
 
 namespace Adeliom\EasyRedirectBundle\DependencyInjection;
 
-use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Adeliom\EasyRedirectBundle\Entity\NotFound;
+use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
  * This is the class that validates and merges configuration from your app/config files.
@@ -26,14 +25,14 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('redirect_class')
                     ->defaultNull()
                     ->validate()
-                        ->ifTrue(fn($value) => !\is_subclass_of($value, Redirect::class))
+                        ->ifTrue(static fn($value) => !\is_subclass_of($value, Redirect::class))
                         ->thenInvalid('"redirect_class" must be an instance of "Adeliom\EasyRedirectBundle\Entity\Redirect"')
                     ->end()
                 ->end()
                 ->scalarNode('not_found_class')
                     ->defaultNull()
                     ->validate()
-                        ->ifTrue(fn($value) => !\is_subclass_of($value, NotFound::class))
+                        ->ifTrue(static fn($value) => !\is_subclass_of($value, NotFound::class))
                         ->thenInvalid('"not_found_class" must be an instance of "Adeliom\EasyRedirectBundle\Entity\NotFound"')
                     ->end()
                 ->end()

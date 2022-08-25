@@ -12,8 +12,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 
 abstract class RedirectCrudCrontroller extends AbstractCrudController
 {
-    public function __construct(private AdminContextProvider $adminContextProvider)
-    {
+    public function __construct(
+        /**
+         * @readonly
+         */
+        private AdminContextProvider $adminContextProvider
+    ) {
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -22,7 +26,7 @@ abstract class RedirectCrudCrontroller extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, "easy_redirect.manage_redirects")
             ->setPageTitle(Crud::PAGE_NEW, "easy_redirect.new_redirect")
             ->setPageTitle(Crud::PAGE_EDIT, "easy_redirect.edit_redirect")
-            ->setPageTitle(Crud::PAGE_DETAIL, fn($entity) => $entity->getSource())
+            ->setPageTitle(Crud::PAGE_DETAIL, static fn($entity) => $entity->getSource())
             ->setEntityLabelInSingular('easy_redirect.redirect')
             ->setEntityLabelInPlural('easy_redirect.redirects')
             ->setFormOptions([

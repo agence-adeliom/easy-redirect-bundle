@@ -18,11 +18,11 @@
     ],
     "require": {
         "php": ">=8.0.2",
-        "symfony/config": "^4.4 || ^5.2 || ^6.0",
-        "symfony/dependency-injection": "^4.4 || ^5.2 || ^6.0",
-        "symfony/http-kernel": "^4.4 || ^5.2 || ^6.0",
-        "easycorp/easyadmin-bundle": "^3.4 || ^v4.0.0",
-        "agence-adeliom/easy-common-bundle": "^1.0"
+        "symfony/config": "^5.4 || ^6.0",
+        "symfony/dependency-injection": "^5.4 || ^6.0",
+        "symfony/http-kernel": "^5.4 || ^6.0",
+        "easycorp/easyadmin-bundle": "^3.4 || ^v4.0",
+        "agence-adeliom/easy-common-bundle": "*"
     },
     "autoload": {
         "psr-4": { "Adeliom\\EasyRedirectBundle\\": "src/" }

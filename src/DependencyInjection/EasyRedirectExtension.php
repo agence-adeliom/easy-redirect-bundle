@@ -19,7 +19,7 @@ class EasyRedirectExtension extends Extension
             throw new InvalidConfigurationException('A "redirect_class" or "not_found_class" must be set for "easy_redirect".');
         }
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         //$loader->load('services.yml');
 
         $modelManagerName = $config['model_manager_name'] ?: 'default';

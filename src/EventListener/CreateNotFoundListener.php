@@ -2,13 +2,17 @@
 
 namespace Adeliom\EasyRedirectBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Adeliom\EasyRedirectBundle\Service\NotFoundManager;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 class CreateNotFoundListener extends NotFoundListener
 {
-    public function __construct(private NotFoundManager $notFoundManager)
-    {
+    public function __construct(
+        /**
+         * @readonly
+         */
+        private NotFoundManager $notFoundManager
+    ) {
     }
 
     public function onKernelException(ExceptionEvent $event): void

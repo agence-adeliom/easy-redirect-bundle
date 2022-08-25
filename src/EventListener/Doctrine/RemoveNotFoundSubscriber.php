@@ -2,18 +2,22 @@
 
 namespace Adeliom\EasyRedirectBundle\EventListener\Doctrine;
 
-use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Adeliom\EasyRedirectBundle\Service\NotFoundManager;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 class RemoveNotFoundSubscriber implements EventSubscriber
 {
-    public function __construct(private NotFoundManager $notFoundManager)
-    {
+    public function __construct(
+        /**
+         * @readonly
+         */
+        private NotFoundManager $notFoundManager
+    ) {
     }
 
     /**

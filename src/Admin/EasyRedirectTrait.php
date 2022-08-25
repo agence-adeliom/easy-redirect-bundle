@@ -2,9 +2,9 @@
 
 namespace Adeliom\EasyRedirectBundle\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemInterface;
 use Iterator;
-use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 trait EasyRedirectTrait

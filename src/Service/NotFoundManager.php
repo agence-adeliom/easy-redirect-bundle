@@ -2,26 +2,27 @@
 
 namespace Adeliom\EasyRedirectBundle\Service;
 
+use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
-use Adeliom\EasyRedirectBundle\Entity\Redirect;
 
 class NotFoundManager
 {
     /**
      * @param string $class The Redirect class name
      */
-    public function __construct(private string $class, private EntityManager $em)
-    {
+    public function __construct(
+        private string $class,
+        /**
+         * @readonly
+         */
+        private EntityManager $em
+    ) {
     }
 
     public function createFromRequest(Request $request): object
     {
-        $notFound = new $this->class(
-            $request->getPathInfo(),
-            $request->getUri(),
-            $request->server->get('HTTP_REFERER')
-        );
+        $notFound = new $this->class($request->getPathInfo(), $request->getUri(), $request->server->get('HTTP_REFERER'));
 
         $this->em->persist($notFound);
         $this->em->flush();

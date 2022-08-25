@@ -2,70 +2,80 @@
 
 namespace Adeliom\EasyRedirectBundle\Entity;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[UniqueEntity('source')]
 #[ORM\MappedSuperclass]
 class NotFound
 {
+    /**
+     * @var mixed
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private mixed $id;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
+    private $id;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'path', type: 'string', length: 500)]
+    #[ORM\Column(name: 'path', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
     protected string $path;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'full_url', type: 'string', length: 500)]
-    protected ?string $fullUrl;
+    #[ORM\Column(name: 'full_url', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
+    protected string $fullUrl;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'timestamp', type: 'datetime')]
+    #[ORM\Column(name: 'referer', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
+    protected string $referer;
+
+    #[Groups('main')]
+    #[ORM\Column(name: 'timestamp', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
     protected ?\DateTimeInterface $timestamp;
 
-    #[Groups('main')]
-    #[ORM\Column(name: 'referer', type: 'string', length: 1000, nullable: true)]
-    protected ?string $referer;
 
-    public function __construct(string $path, string $fullUrl, ?string $referer, ?\DateTimeInterface $timestamp)
+    public function __construct(string $path, string $fullUrl, ?string $referer = null, ?\DateTimeInterface $timestamp = null)
     {
         if (null === $timestamp) {
             $timestamp = new \DateTime('now');
         }
 
         $path = \trim($path);
-        $path = !empty($path) ? $path : null;
+        $path = empty($path) ? null : $path;
 
         if (null !== $path) {
-            $path = '/'.\ltrim(\parse_url($path, \PHP_URL_PATH), '/');
+            $path = '/' . \ltrim(\parse_url($path, \PHP_URL_PATH), '/');
         }
 
         $this->path = $path;
         $this->fullUrl = $fullUrl;
-        $this->referer = $referer;
         $this->timestamp = $timestamp;
     }
 
-    public function getId(): mixed
+    /**
+     * @return mixed
+     */
+    public function getId()
     {
         return $this->id;
     }
+
     public function getPath(): string
     {
         return $this->path;
     }
+
     public function getFullUrl(): string
     {
         return $this->fullUrl;
     }
+
     public function getTimestamp(): \DateTimeInterface
     {
         return $this->timestamp;
     }
+
     public function getReferer(): ?string
     {
         return $this->referer;

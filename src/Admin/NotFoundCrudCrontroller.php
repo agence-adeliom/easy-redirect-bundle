@@ -2,30 +2,38 @@
 
 namespace Adeliom\EasyRedirectBundle\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Iterator;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Iterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 abstract class NotFoundCrudCrontroller extends AbstractCrudController
 {
-    public function __construct(private ParameterBagInterface $parameterBag, private AdminUrlGenerator $adminUrlGenerator)
-    {
+    public function __construct(
+        /**
+         * @readonly
+         */
+        private ParameterBagInterface $parameterBag,
+        /**
+         * @readonly
+         */
+        private AdminUrlGenerator $adminUrlGenerator
+    ) {
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
             ->setPageTitle(Crud::PAGE_INDEX, "easy_redirect.not_founds")
-            ->setPageTitle(Crud::PAGE_DETAIL, fn($entity) => $entity->getPath())
+            ->setPageTitle(Crud::PAGE_DETAIL, static fn($entity) => $entity->getPath())
             ->setEntityLabelInSingular('easy_redirect.not_found')
             ->setEntityLabelInPlural('easy_redirect.not_founds')
             ->showEntityActionsInlined(true)
@@ -62,7 +70,7 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
 
     public function createRedirection(AdminContext $context): RedirectResponse
     {
-        if($notFound = $context->getEntity()->getInstance()){
+        if ($notFound = $context->getEntity()->getInstance()) {
             $redirectCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->parameterBag->get('easy_redirect.redirect_class'));
             return $this->redirect(
                 $this->adminUrlGenerator
@@ -73,6 +81,7 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
                     ->generateUrl()
             );
         }
+
         return $this->redirect(
             $context->getRequest()->headers->get('referer')
         );
@@ -84,8 +93,7 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class
         ]);
     }
-
 }
