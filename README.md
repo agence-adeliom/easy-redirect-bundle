@@ -10,6 +10,14 @@ For redirects, 404 errors are intercepted and the requested path is looked up. I
 
 404 errors can be logged as well. Each 404 error is it's own record in the database. The path, full URL, timestamp, and referer are stored. Storing each error as a separate record allows viewing statistics over time and seeing all the referer URLs. When a redirect is created or updated, 404 records that match it's path are deleted.
 
+## Versions
+
+| Repository Branch | Version | Symfony Compatibility | PHP Compatibility | Status                     |
+|-------------------|---------|-----------------------|-------------------|----------------------------|
+| `2.x`             | `2.x`   | `5.4`, and `6.x`      | `8.0.2` or higher | New features and bug fixes |
+| `1.x`             | `1.x`   | `4.4`, and `5.x`      | `7.2.5` or higher | No longer maintained       |
+
+
 ## Installation with Symfony Flex
 
 Add our recipes endpoint
