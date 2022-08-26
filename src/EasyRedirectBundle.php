@@ -3,14 +3,12 @@
 namespace Adeliom\EasyRedirectBundle;
 
 use Adeliom\EasyRedirectBundle\DependencyInjection\EasyRedirectExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class EasyRedirectBundle extends Bundle
 {
-    /**
-     * @return ExtensionInterface|null The container extension
-     */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new EasyRedirectExtension();
     }

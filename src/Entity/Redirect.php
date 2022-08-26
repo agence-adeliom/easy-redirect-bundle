@@ -2,89 +2,64 @@
 
 namespace Adeliom\EasyRedirectBundle\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @UniqueEntity(
- *     fields="source",
- *     errorPath="source",
- *     message="easy_redirect.source.unique"
- * )
- * @ORM\MappedSuperclass()
- */
+#[UniqueEntity(fields: 'source', message: 'easy_redirect.source.unique', errorPath: 'source')]
+#[ORM\MappedSuperclass]
 class Redirect
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @var mixed
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private $id;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="source", type="string", length="255", unique=true)
-     * @Assert\NotBlank(message="easy_redirect.source.blank")
-     */
-    protected $source;
+    #[Groups('main')]
+    #[ORM\Column(name: 'source', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, unique: true)]
+    #[Assert\NotBlank(message: 'easy_redirect.source.blank')]
+    protected string $source;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="destination", type="string", length="255")
-     * @Assert\NotBlank(message="easy_redirect.destination.blank")
-     */
-    protected $destination;
+    #[Groups('main')]
+    #[ORM\Column(name: 'destination', type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
+    #[Assert\NotBlank(message: 'easy_redirect.destination.blank')]
+    protected string $destination;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="status", type="string", length="10")
-     * @Assert\Type("string")
-     */
-    protected $status;
+    #[Groups('main')]
+    #[ORM\Column(name: 'status', type: \Doctrine\DBAL\Types\Types::STRING, length: 10)]
+    #[Assert\Type('string')]
+    protected string $status;
 
-    /**
-     * @var int
-     * @Groups("main")
-     * @ORM\Column(name="count", type="integer")
-     */
-    protected $count = 0;
+    #[Groups('main')]
+    #[ORM\Column(name: 'count', type: \Doctrine\DBAL\Types\Types::INTEGER)]
+    protected int $count = 0;
 
-    /**
-     * @var \DateTime
-     * @Groups("main")
-     * @ORM\Column(name="last_accessed", type="datetime", nullable=true)
-     */
-    protected $lastAccessed = null;
+    #[Groups('main')]
+    #[ORM\Column(name: 'last_accessed', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $lastAccessed = null;
 
-    /**
-     * @param string $source
-     * @param string $destination
-     * @param bool   $permanent
-     */
-    public function __construct($source = null, $destination = null, $status = 301)
+    public function __construct(?string $source = null, ?string $destination = null, int $status = 301)
     {
-        if ($source){
+        if ($source) {
             $this->setSource($source);
         }
-        if ($destination){
+
+        if ($destination) {
             $this->setDestination($destination);
         }
+
         $this->setStatus($status);
     }
 
     /**
-     * @param string $destination
-     * @param bool   $permanent
-     *
-     * @return static
+     * @return $this
      */
-    public static function createFromNotFound(NotFound $notFound, $destination, $status = 301)
+    public static function createFromNotFound(NotFound $notFound, string $destination, $status = 301)
     {
         return new static($notFound->getPath(), $destination, $status);
     }
@@ -97,21 +72,15 @@ class Redirect
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getSource()
+    public function getSource(): string
     {
         return $this->source;
     }
 
-    /**
-     * @param string $source
-     */
-    public function setSource($source)
+    public function setSource(string $source): void
     {
         $source = \trim($source);
-        $source = !empty($source) ? $source : null;
+        $source = empty($source) ? null : $source;
 
         if (null !== $source) {
             $source = $this->createAbsoluteUri($source);
@@ -120,21 +89,15 @@ class Redirect
         $this->source = $source;
     }
 
-    /**
-     * @return string
-     */
-    public function getDestination()
+    public function getDestination(): string
     {
         return $this->destination;
     }
 
-    /**
-     * @param string $destination
-     */
-    public function setDestination($destination)
+    public function setDestination(string $destination): void
     {
         $destination = \trim($destination);
-        $destination = !empty($destination) ? $destination : null;
+        $destination = empty($destination) ? null : $destination;
 
         if (null !== $destination && null === \parse_url($destination, \PHP_URL_SCHEME)) {
             $destination = $this->createAbsoluteUri($destination, true);
@@ -143,65 +106,41 @@ class Redirect
         $this->destination = $destination;
     }
 
-    /**
-     * @param string $status
-     */
     public function setStatus(string $status): void
     {
         $this->status = $status;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $amount
-     */
-    public function increaseCount($amount = 1)
+    public function increaseCount(int $amount = 1): void
     {
         $this->count += $amount;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getLastAccessed()
+    public function getLastAccessed(): \DateTimeInterface
     {
         return $this->lastAccessed;
     }
 
-    /**
-     * @param \DateTime $time
-     */
-    public function updateLastAccessed(\DateTime $time = null)
+    public function updateLastAccessed(?\DateTimeInterface $time): void
     {
         if (null === $time) {
-            $time = new \DateTime('now');
+            $time = new DateTime('now');
         }
 
         $this->lastAccessed = $time;
     }
 
-    /**
-     * @param string $path
-     * @param bool   $allowQueryString
-     *
-     * @return string
-     */
-    protected function createAbsoluteUri($path, $allowQueryString = false)
+    protected function createAbsoluteUri(string $path, bool $allowQueryString = false): string
     {
         $value = '/'.\ltrim(\parse_url($path, \PHP_URL_PATH), '/');
 

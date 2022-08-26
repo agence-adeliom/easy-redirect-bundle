@@ -8,20 +8,19 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-
 class EasyRedirectExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
-        $config        = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, $configs);
 
         if (null === $config['redirect_class'] && null === $config['not_found_class']) {
             throw new InvalidConfigurationException('A "redirect_class" or "not_found_class" must be set for "easy_redirect".');
         }
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        //$loader->load('services.yml');
+        // $loader->load('services.yml');
 
         $modelManagerName = $config['model_manager_name'] ?: 'default';
 
@@ -42,8 +41,7 @@ class EasyRedirectExtension extends Extension
         }
     }
 
-
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'easy_redirect';
     }

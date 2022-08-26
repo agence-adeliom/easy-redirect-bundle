@@ -2,64 +2,46 @@
 
 namespace Adeliom\EasyRedirectBundle\Entity;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @UniqueEntity("source")
- * @ORM\MappedSuperclass()
- */
+#[UniqueEntity('source')]
+#[ORM\MappedSuperclass]
 class NotFound
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @var mixed
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private $id;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="path", type="string", length="500")
-     */
-    protected $path;
+    #[Groups('main')]
+    #[ORM\Column(name: 'path', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
+    protected string $path;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="full_url", type="string", length="500")
-     */
-    protected $fullUrl;
+    #[Groups('main')]
+    #[ORM\Column(name: 'full_url', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
+    protected string $fullUrl;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="timestamp", type="datetime")
-     */
-    protected $timestamp;
+    #[Groups('main')]
+    #[ORM\Column(name: 'referer', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
+    protected string $referer;
 
-    /**
-     * @var string
-     * @Groups("main")
-     * @ORM\Column(name="referer", type="string", length="1000", nullable=true)
-     */
-    protected $referer;
+    #[Groups('main')]
+    #[ORM\Column(name: 'timestamp', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
+    protected ?\DateTimeInterface $timestamp;
 
-    /**
-     * @param string      $path
-     * @param string      $fullUrl
-     * @param string|null $referer
-     */
-    public function __construct($path, $fullUrl, $referer = null, \DateTime $timestamp = null)
+    public function __construct(string $path, string $fullUrl, ?string $referer = null, ?\DateTimeInterface $timestamp = null)
     {
         if (null === $timestamp) {
             $timestamp = new \DateTime('now');
         }
 
         $path = \trim($path);
-        $path = !empty($path) ? $path : null;
+        $path = empty($path) ? null : $path;
 
         if (null !== $path) {
             $path = '/'.\ltrim(\parse_url($path, \PHP_URL_PATH), '/');
@@ -67,7 +49,6 @@ class NotFound
 
         $this->path = $path;
         $this->fullUrl = $fullUrl;
-        $this->referer = $referer;
         $this->timestamp = $timestamp;
     }
 
@@ -79,34 +60,22 @@ class NotFound
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @return string
-     */
-    public function getFullUrl()
+    public function getFullUrl(): string
     {
         return $this->fullUrl;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getTimestamp()
+    public function getTimestamp(): \DateTimeInterface
     {
         return $this->timestamp;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getReferer()
+    public function getReferer(): ?string
     {
         return $this->referer;
     }
