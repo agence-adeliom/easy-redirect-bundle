@@ -27,8 +27,8 @@ class NotFound
     protected string $fullUrl;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'referer', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
-    protected string $referer;
+    #[ORM\Column(name: 'referer', type: \Doctrine\DBAL\Types\Types::STRING, length: 500, nullable: true)]
+    protected ?string $referer;
 
     #[Groups('main')]
     #[ORM\Column(name: 'timestamp', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
@@ -49,6 +49,7 @@ class NotFound
 
         $this->path = $path;
         $this->fullUrl = $fullUrl;
+        $this->referer = $referer;
         $this->timestamp = $timestamp;
     }
 
