@@ -37,7 +37,7 @@ abstract class RedirectCrudCrontroller extends AbstractCrudController
     public function createEntity(string $entityFqcn): object
     {
         $context = $this->adminContextProvider->getContext();
-        $request = $context->getRequest();
+        $request = $context?->getRequest();
 
         return new $entityFqcn($request->query->get('not_found'));
     }
