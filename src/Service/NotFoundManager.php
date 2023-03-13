@@ -33,7 +33,7 @@ class NotFoundManager
      */
     public function removeForRedirect(Redirect $redirect): void
     {
-        $notFounds = $this->em->getRepository($this->class)->findBy(['path' => $redirect->getSource()]);
+        $notFounds = $this->em->getRepository($this->class)->findBy(['path' => $redirect->getSource(), 'host' => $redirect->getHost()]);
 
         foreach ($notFounds as $notFound) {
             $this->em->remove($notFound);

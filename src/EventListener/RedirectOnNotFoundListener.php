@@ -25,7 +25,7 @@ class RedirectOnNotFoundListener extends NotFoundListener
             return;
         }
 
-        $redirect = $this->redirectManager->findAndUpdate($event->getRequest()->getPathInfo());
+        $redirect = $this->redirectManager->findAndUpdate($event->getRequest()->getPathInfo(), $event->getRequest()->getHost());
 
         if (!$redirect instanceof \Adeliom\EasyRedirectBundle\Entity\Redirect) {
             return;

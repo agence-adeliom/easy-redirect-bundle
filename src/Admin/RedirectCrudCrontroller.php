@@ -39,14 +39,15 @@ abstract class RedirectCrudCrontroller extends AbstractCrudController
         $context = $this->adminContextProvider->getContext();
         $request = $context?->getRequest();
 
-        return new $entityFqcn($request->query->get('not_found'));
+        return new $entityFqcn($request->query->get('not_found'), null, $request->query->get('host'));
     }
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('source', 'easy_redirect.form.source')->setRequired(true)->setColumns('col-12 col-sm-6 col-md-5');
-        yield TextField::new('destination', 'easy_redirect.form.destination')->setRequired(true)->setColumns('col-12 col-sm-6 col-md-5');
-        yield ChoiceField::new('status', 'easy_redirect.form.status')->setColumns('col-12 col-md-2')
+        yield TextField::new('source', 'easy_redirect.form.source')->setRequired(true)->setColumns('col-12 col-sm-6');
+        yield TextField::new('host', 'easy_redirect.form.host')->setColumns('col-12 col-sm-6');
+        yield TextField::new('destination', 'easy_redirect.form.destination')->setRequired(true)->setColumns('col-12 col-sm-6 col-md-8');
+        yield ChoiceField::new('status', 'easy_redirect.form.status')->setColumns('col-12 col-sm-6 col-md-4')
             ->setChoices([
                 '301' => '301',
                 '302' => '302',

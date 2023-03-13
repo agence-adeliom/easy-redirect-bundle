@@ -26,6 +26,10 @@ class Redirect
     protected string $source;
 
     #[Groups('main')]
+    #[ORM\Column(name: 'host', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
+    protected ?string $host = null;
+
+    #[Groups('main')]
     #[ORM\Column(name: 'destination', type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Assert\NotBlank(message: 'easy_redirect.destination.blank')]
     protected string $destination;
@@ -43,7 +47,7 @@ class Redirect
     #[ORM\Column(name: 'last_accessed', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $lastAccessed = null;
 
-    public function __construct(?string $source = null, ?string $destination = null, int $status = 301)
+    public function __construct(?string $source = null, ?string $destination = null, ?string $host = null, int $status = 301)
     {
         if ($source) {
             $this->setSource($source);
@@ -51,6 +55,10 @@ class Redirect
 
         if ($destination) {
             $this->setDestination($destination);
+        }
+
+        if ($host) {
+            $this->setHost($host);
         }
 
         $this->setStatus($status);
@@ -61,7 +69,7 @@ class Redirect
      */
     public static function createFromNotFound(NotFound $notFound, string $destination, $status = 301)
     {
-        return new static($notFound->getPath(), $destination, $status);
+        return new static($notFound->getPath(), $destination, $notFound->getHost(), $status);
     }
 
     /**
@@ -106,6 +114,16 @@ class Redirect
         $this->destination = $destination;
     }
 
+    public function setHost(string $host): void
+    {
+        $this->host = $host;
+    }
+
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
     public function setStatus(string $status): void
     {
         $this->status = $status;
@@ -131,7 +149,7 @@ class Redirect
         return $this->lastAccessed;
     }
 
-    public function updateLastAccessed(?\DateTimeInterface $time): void
+    public function updateLastAccessed(?\DateTimeInterface $time = null): void
     {
         if (null === $time) {
             $time = new DateTime('now');

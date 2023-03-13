@@ -63,6 +63,7 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('path', 'easy_redirect.form.path')->hideOnForm();
+        yield TextField::new('host', 'easy_redirect.form.host')->hideOnForm();
         yield TextField::new('fullUrl', 'easy_redirect.form.fullUrl')->hideOnForm();
         yield TextField::new('referer', 'easy_redirect.form.referer')->hideOnForm();
         yield DateTimeField::new('timestamp', 'easy_redirect.form.timestamp')->hideOnForm();
@@ -79,6 +80,7 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
                     ->setController($redirectCrud)
                     ->setAction(Action::NEW)
                     ->set('not_found', $notFound->getPath())
+                    ->set('host', $notFound->getHost())
                     ->generateUrl()
             );
         }

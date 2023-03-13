@@ -23,6 +23,10 @@ class NotFound
     protected string $path;
 
     #[Groups('main')]
+    #[ORM\Column(name: 'host', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
+    protected ?string $host;
+
+    #[Groups('main')]
     #[ORM\Column(name: 'full_url', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
     protected string $fullUrl;
 

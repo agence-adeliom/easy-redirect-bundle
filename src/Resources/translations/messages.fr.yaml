@@ -11,6 +11,7 @@ easy_redirect:
     count: Utilisation
     lastAccessed: Dernier accès
     source: Source
+    host: Domaine
     destination: Destination
     status: Code de status
     path: Chemin
