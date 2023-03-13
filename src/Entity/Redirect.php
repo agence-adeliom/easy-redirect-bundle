@@ -91,9 +91,11 @@ class Redirect
         $source = empty($source) ? null : $source;
 
         if (null !== $source) {
+            if ($host = \parse_url($source, \PHP_URL_HOST)) {
+                $this->setHost($host);
+            }
             $source = $this->createAbsoluteUri($source);
         }
-
         $this->source = $source;
     }
 
@@ -116,7 +118,9 @@ class Redirect
 
     public function setHost(?string $host = ""): void
     {
-        $this->host = $host ?? "";
+        if(null !== $host){
+            $this->host = $host ?? "";
+        }
     }
 
     public function getHost(): ?string
