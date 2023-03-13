@@ -23,8 +23,8 @@ class NotFound
     protected string $path;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'host', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
-    protected ?string $host;
+    #[ORM\Column(name: 'host', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, options: ["default" => ""])]
+    protected ?string $host = "";
 
     #[Groups('main')]
     #[ORM\Column(name: 'full_url', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
@@ -46,12 +46,19 @@ class NotFound
 
         $path = \trim($path);
         $path = empty($path) ? null : $path;
+        $host = null;
 
         if (null !== $path) {
             $path = '/'.\ltrim(\parse_url($path, \PHP_URL_PATH), '/');
         }
 
+        if (null !== $fullUrl) {
+            $host = \ltrim(\parse_url($fullUrl, \PHP_URL_HOST), '/');
+        }
+
+
         $this->path = $path;
+        $this->host = $host;
         $this->fullUrl = $fullUrl;
         $this->referer = $referer;
         $this->timestamp = $timestamp;
@@ -68,6 +75,11 @@ class NotFound
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    public function getHost(): ?string
+    {
+        return $this->host;
     }
 
     public function getFullUrl(): string

@@ -8,8 +8,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: 'source', message: 'easy_redirect.source.unique', errorPath: 'source')]
 #[ORM\MappedSuperclass]
+#[UniqueEntity(fields: ['source', 'host'], message: 'easy_redirect.source.unique', errorPath: 'source')]
 class Redirect
 {
     /**
@@ -21,16 +21,16 @@ class Redirect
     private $id;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'source', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, unique: true)]
+    #[ORM\Column(name: 'source', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
     #[Assert\NotBlank(message: 'easy_redirect.source.blank')]
     protected string $source;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'host', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
-    protected ?string $host = null;
+    #[ORM\Column(name: 'host', type: \Doctrine\DBAL\Types\Types::STRING, length: 255, options: ["default" => ""])]
+    protected ?string $host = "";
 
     #[Groups('main')]
-    #[ORM\Column(name: 'destination', type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
+    #[ORM\Column(name: 'destination', type: \Doctrine\DBAL\Types\Types::STRING, length: 500)]
     #[Assert\NotBlank(message: 'easy_redirect.destination.blank')]
     protected string $destination;
 
@@ -47,7 +47,7 @@ class Redirect
     #[ORM\Column(name: 'last_accessed', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $lastAccessed = null;
 
-    public function __construct(?string $source = null, ?string $destination = null, ?string $host = null, int $status = 301)
+    public function __construct(?string $source = null, ?string $destination = null, ?string $host = "", int $status = 301)
     {
         if ($source) {
             $this->setSource($source);
@@ -114,12 +114,12 @@ class Redirect
         $this->destination = $destination;
     }
 
-    public function setHost(string $host): void
+    public function setHost(?string $host = ""): void
     {
-        $this->host = $host;
+        $this->host = $host ?? "";
     }
 
-    public function getHost(): string
+    public function getHost(): ?string
     {
         return $this->host;
     }

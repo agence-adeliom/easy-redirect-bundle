@@ -80,7 +80,7 @@ abstract class NotFoundCrudCrontroller extends AbstractCrudController
                     ->setController($redirectCrud)
                     ->setAction(Action::NEW)
                     ->set('not_found', $notFound->getPath())
-                    ->set('host', $notFound->getHost())
+                    ->set('host', $notFound->getHost() ?? "")
                     ->generateUrl()
             );
         }
