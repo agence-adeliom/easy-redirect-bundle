@@ -5,23 +5,21 @@ namespace Adeliom\EasyRedirectBundle\EventListener;
 use Adeliom\EasyRedirectBundle\Service\RedirectManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 
-/**
- * @author Kevin Bond <kevinbond@gmail.com>
- */
-class RedirectOnNotFoundListener extends NotFoundListener
+class RedirectListener
 {
     public function __construct(
         /**
          * @readonly
          */
-        private RedirectManager $redirectManager
+        private readonly RedirectManager $redirectManager
     ) {
     }
 
-    public function onKernelException(ExceptionEvent $event): void
+    public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$this->isNotFoundException($event)) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

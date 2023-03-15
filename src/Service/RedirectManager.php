@@ -19,15 +19,10 @@ class RedirectManager
     ) {
     }
 
-    public function findAndUpdate(string $source, ?string $host = null): ?Redirect
+    public function findAndUpdate(string $source, ?string $host = ""): ?Redirect
     {
         $redirect = null;
-        if($host){
-            $redirect = $this->em->getRepository($this->class)->findOneBy(['source' => $source, 'host' => $host]);
-        }
-        if (!$redirect){
-            $redirect = $this->em->getRepository($this->class)->findOneBy(['source' => $source]);
-        }
+        $redirect = $this->em->getRepository($this->class)->findOneBy(['source' => $source, 'host' => $host]);
 
         if (!$redirect instanceof \Adeliom\EasyRedirectBundle\Entity\Redirect) {
             return null;
