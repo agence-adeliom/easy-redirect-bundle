@@ -4,13 +4,16 @@ namespace Adeliom\EasyRedirectBundle\EventListener\Doctrine;
 
 use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Adeliom\EasyRedirectBundle\Service\NotFoundManager;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class RemoveNotFoundSubscriber implements EventSubscriber
+#[AsDoctrineListener(Events::postPersist)]
+#[AsDoctrineListener(Events::postUpdate)]
+class RemoveNotFoundSubscriber
 {
     public function __construct(
         /**
@@ -18,17 +21,6 @@ class RemoveNotFoundSubscriber implements EventSubscriber
          */
         private NotFoundManager $notFoundManager
     ) {
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getSubscribedEvents(): array
-    {
-        return [
-            'postPersist',
-            'postUpdate',
-        ];
     }
 
     public function postUpdate(LifecycleEventArgs $args): void

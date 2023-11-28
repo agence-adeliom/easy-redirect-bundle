@@ -8,5 +8,5 @@ services:
     arguments:
       - '@easy_redirect.not_found_manager'
     tags:
-      - doctrine.event_subscriber
-
+      - { name: 'doctrine.event_listener', event: 'postPersist' }
+      - { name: 'doctrine.event_listener', event: 'postUpdate' }
