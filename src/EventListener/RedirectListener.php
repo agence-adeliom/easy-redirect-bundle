@@ -3,16 +3,13 @@
 namespace Adeliom\EasyRedirectBundle\EventListener;
 
 use Adeliom\EasyRedirectBundle\Service\RedirectManager;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class RedirectListener
 {
     public function __construct(
-        /**
-         * @readonly
-         */
         private readonly RedirectManager $redirectManager
     ) {
     }
@@ -23,15 +20,18 @@ class RedirectListener
             return;
         }
 
-        $redirect = $this->redirectManager->findAndUpdate($event->getRequest()->getPathInfo(), $event->getRequest()->getHost());
+        try {
+            $redirect = $this->redirectManager->findAndUpdate($event->getRequest()->getPathInfo(), $event->getRequest()->getHost());
+            if (!$redirect) {
+                return;
+            }
 
-        if (!$redirect instanceof \Adeliom\EasyRedirectBundle\Entity\Redirect) {
+            $event->setResponse(new RedirectResponse(
+                $redirect->getDestination(),
+                $redirect->getStatus() ?: 301
+            ));
+        } catch (ORMException) {
             return;
         }
-
-        $event->setResponse(new RedirectResponse(
-            $redirect->getDestination(),
-            $redirect->getStatus() ?: 301
-        ));
     }
 }

@@ -3,15 +3,13 @@
 namespace Adeliom\EasyRedirectBundle\EventListener;
 
 use Adeliom\EasyRedirectBundle\Service\NotFoundManager;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 class CreateNotFoundListener extends NotFoundListener
 {
     public function __construct(
-        /**
-         * @readonly
-         */
-        private NotFoundManager $notFoundManager
+        private readonly NotFoundManager $notFoundManager
     ) {
     }
 
@@ -21,6 +19,10 @@ class CreateNotFoundListener extends NotFoundListener
             return;
         }
 
-        $this->notFoundManager->createFromRequest($event->getRequest());
+        try {
+            $this->notFoundManager->createFromRequest($event->getRequest());
+        } catch (ORMException) {
+            return;
+        }
     }
 }

@@ -12,17 +12,25 @@ class NotFoundManager
      * @param string $class The Redirect class name
      */
     public function __construct(
-        private string $class,
-        private EntityManager $em
+        private readonly string $class,
+        private readonly EntityManager $entityManager
     ) {
     }
 
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\Exception\NotSupported
+     * @throws \Doctrine\ORM\Exception\ORMException
+     */
     public function createFromRequest(Request $request): object
     {
-        if (!$notFound = $this->em->getRepository($this->class)->findOneBy(['path' => $request->getPathInfo()])) {
+        /** @var \Adeliom\EasyRedirectBundle\Repository\NotFoundRepositoryInterface $notFoundRepository */
+        $notFoundRepository = $this->entityManager->getRepository($this->class);
+        $notFound = $notFoundRepository->findOneBy(['path' => $request->getPathInfo()]);
+        if (!$notFound) {
             $notFound = new $this->class($request->getPathInfo(), $request->getUri(), $request->server->get('HTTP_REFERER'));
-            $this->em->persist($notFound);
-            $this->em->flush();
+            $this->entityManager->persist($notFound);
+            $this->entityManager->flush();
         }
 
         return $notFound;
@@ -30,15 +38,18 @@ class NotFoundManager
 
     /**
      * Deletes NotFound entities for a Redirect's path.
+     * @throws \Doctrine\ORM\Exception\ORMException
      */
     public function removeForRedirect(Redirect $redirect): void
     {
-        $notFounds = $this->em->getRepository($this->class)->findBy(['path' => $redirect->getSource(), 'host' => $redirect->getHost()]);
+        /** @var \Adeliom\EasyRedirectBundle\Repository\NotFoundRepositoryInterface $notFoundRepository */
+        $notFoundRepository = $this->entityManager->getRepository($this->class);
+        $notFounds = $notFoundRepository->findBy(['path' => $redirect->getSource(), 'host' => $redirect->getHost()]);
 
         foreach ($notFounds as $notFound) {
-            $this->em->remove($notFound);
+            $this->entityManager->remove($notFound);
         }
 
-        $this->em->flush();
+        $this->entityManager->flush();
     }
 }

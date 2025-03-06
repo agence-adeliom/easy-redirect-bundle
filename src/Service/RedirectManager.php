@@ -11,27 +11,29 @@ class RedirectManager
      * @param string $class The Redirect class name
      */
     public function __construct(
-        private string $class,
-        /**
-         * @readonly
-         */
-        private EntityManager $em
+        private readonly string $class,
+        private readonly EntityManager $entityManager
     ) {
     }
 
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\Exception\NotSupported
+     * @throws \Doctrine\ORM\Exception\ORMException
+     */
     public function findAndUpdate(string $source, ?string $host = ""): ?Redirect
     {
-        $redirect = null;
-        $redirect = $this->em->getRepository($this->class)->findOneBy(['source' => $source, 'host' => $host]);
-
-        if (!$redirect instanceof \Adeliom\EasyRedirectBundle\Entity\Redirect) {
+        /** @var \Adeliom\EasyRedirectBundle\Repository\RedirectRepositoryInterface $redirectRepository */
+        $redirectRepository = $this->entityManager->getRepository($this->class);
+        $redirect = $redirectRepository->findOneBy(['source' => $source, 'host' => $host]);
+        if (! $redirect instanceof Redirect) {
             return null;
         }
 
         $redirect->increaseCount();
         $redirect->updateLastAccessed();
 
-        $this->em->flush();
+        $this->entityManager->flush();
 
         return $redirect;
     }

@@ -5,35 +5,31 @@ namespace Adeliom\EasyRedirectBundle\EventListener\Doctrine;
 use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Adeliom\EasyRedirectBundle\Service\NotFoundManager;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Exception\ORMException;
 
-/**
- * @author Kevin Bond <kevinbond@gmail.com>
- */
 #[AsDoctrineListener(Events::postPersist)]
 #[AsDoctrineListener(Events::postUpdate)]
 class RemoveNotFoundSubscriber
 {
     public function __construct(
-        /**
-         * @readonly
-         */
-        private NotFoundManager $notFoundManager
+        private readonly NotFoundManager $notFoundManager
     ) {
     }
 
-    public function postUpdate(LifecycleEventArgs $args): void
+    public function postUpdate(PostUpdateEventArgs $args): void
     {
         $this->remoteNotFoundForRedirect($args);
     }
 
-    public function postPersist(LifecycleEventArgs $args): void
+    public function postPersist(PostPersistEventArgs $args): void
     {
         $this->remoteNotFoundForRedirect($args);
     }
 
-    private function remoteNotFoundForRedirect(LifecycleEventArgs $args): void
+    private function remoteNotFoundForRedirect(PostPersistEventArgs|PostUpdateEventArgs $args): void
     {
         $entity = $args->getObject();
 
@@ -41,11 +37,10 @@ class RemoveNotFoundSubscriber
             return;
         }
 
-        $this->getNotFoundManager()->removeForRedirect($entity);
-    }
-
-    private function getNotFoundManager(): NotFoundManager
-    {
-        return $this->notFoundManager;
+        try {
+            $this->notFoundManager->removeForRedirect($entity);
+        } catch (ORMException) {
+            return;
+        }
     }
 }

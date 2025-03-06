@@ -18,14 +18,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 abstract class NotFoundCrudCrontroller extends AbstractCrudController
 {
     public function __construct(
-        /**
-         * @readonly
-         */
-        private ParameterBagInterface $parameterBag,
-        /**
-         * @readonly
-         */
-        private AdminUrlGenerator $adminUrlGenerator
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
 
