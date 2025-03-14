@@ -88,14 +88,16 @@ class Redirect
     public function setSource(string $source): void
     {
         $source = \trim($source);
-        $source = empty($source) ? null : $source;
+        $source = $source === '' || $source === '0' ? null : $source;
 
         if (null !== $source) {
             if ($host = \parse_url($source, \PHP_URL_HOST)) {
                 $this->setHost($host);
             }
+
             $source = $this->createAbsoluteUri($source);
         }
+
         $this->source = $source;
     }
 
@@ -107,7 +109,7 @@ class Redirect
     public function setDestination(string $destination): void
     {
         $destination = \trim($destination);
-        $destination = empty($destination) ? null : $destination;
+        $destination = $destination === '' || $destination === '0' ? null : $destination;
 
         if (null !== $destination && null === \parse_url($destination, \PHP_URL_SCHEME)) {
             $destination = $this->createAbsoluteUri($destination, true);
@@ -155,7 +157,7 @@ class Redirect
 
     public function updateLastAccessed(?\DateTimeInterface $time = null): void
     {
-        if (null === $time) {
+        if (!$time instanceof \DateTimeInterface) {
             $time = new DateTime('now');
         }
 

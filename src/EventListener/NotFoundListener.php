@@ -19,11 +19,7 @@ abstract class NotFoundListener
             return false;
         }
 
-        if (404 !== (int) $exception->getStatusCode()) {
-            return false;
-        }
-
-        return true;
+        return 404 === (int) $exception->getStatusCode();
     }
 
     abstract public function onKernelException(ExceptionEvent $event);

@@ -22,7 +22,7 @@ class RedirectListener
 
         try {
             $redirect = $this->redirectManager->findAndUpdate($event->getRequest()->getPathInfo(), $event->getRequest()->getHost());
-            if (!$redirect) {
+            if (!$redirect instanceof \Adeliom\EasyRedirectBundle\Entity\Redirect) {
                 return;
             }
 

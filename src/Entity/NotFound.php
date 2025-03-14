@@ -31,21 +31,20 @@ class NotFound
     protected string $fullUrl;
 
     #[Groups('main')]
-    #[ORM\Column(name: 'referer', type: \Doctrine\DBAL\Types\Types::STRING, length: 500, nullable: true)]
-    protected ?string $referer;
-
-    #[Groups('main')]
     #[ORM\Column(name: 'timestamp', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
     protected ?\DateTimeInterface $timestamp;
 
-    public function __construct(string $path, string $fullUrl, ?string $referer = null, ?\DateTimeInterface $timestamp = null)
+    public function __construct(string $path, string $fullUrl, #[Groups('main')]
+    #[ORM\Column(name: 'referer', type: \Doctrine\DBAL\Types\Types::STRING, length: 500, nullable: true)]
+    protected ?string $referer = null, ?\DateTimeInterface $timestamp = null)
     {
-        if (null === $timestamp) {
+        if (!$timestamp instanceof \DateTimeInterface) {
             $timestamp = new \DateTime('now');
         }
 
         $path = \trim($path);
-        $path = empty($path) ? null : $path;
+        $path = $path === '' || $path === '0' ? null : $path;
+
         $host = null;
 
         if (null !== $path) {
@@ -60,7 +59,6 @@ class NotFound
         $this->path = $path;
         $this->host = $host;
         $this->fullUrl = $fullUrl;
-        $this->referer = $referer;
         $this->timestamp = $timestamp;
     }
 
