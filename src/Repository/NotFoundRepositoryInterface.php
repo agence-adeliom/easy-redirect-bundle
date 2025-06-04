@@ -11,7 +11,7 @@ interface NotFoundRepositoryInterface
     /**
      * @return NotFound[]
      */
-    public function findBy(array $criteria, array $orderBy = null): array;
+    public function findBy(array $criteria, ?array $orderBy = null): array;
 
-    public function findOneBy(array $criteria, array $orderBy = null): ?NotFound;
+    public function findOneBy(array $criteria, ?array $orderBy = null): ?NotFound;
 }

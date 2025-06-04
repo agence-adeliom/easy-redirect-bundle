@@ -8,5 +8,5 @@ use Adeliom\EasyRedirectBundle\Entity\Redirect;
 
 interface RedirectRepositoryInterface
 {
-    public function findOneBy(array $criteria, array $orderBy = null): ?Redirect;
+    public function findOneBy(array $criteria, ?array $orderBy = null): ?Redirect;
 }
