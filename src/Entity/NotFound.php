@@ -48,11 +48,11 @@ class NotFound
         $host = null;
 
         if (null !== $path) {
-            $path = '/'.\ltrim(\parse_url($path, \PHP_URL_PATH), '/');
+            $path = '/'.\ltrim((string) \parse_url($path, \PHP_URL_PATH), '/');
         }
 
         if (null !== $fullUrl) {
-            $host = \ltrim(\parse_url($fullUrl, \PHP_URL_HOST), '/');
+            $host = \ltrim((string) \parse_url($fullUrl, \PHP_URL_HOST), '/');
         }
 
 
