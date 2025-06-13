@@ -9,6 +9,7 @@ use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Adeliom\EasyRedirectBundle\Repository\NotFoundRepositoryInterface;
 use Adeliom\EasyRedirectBundle\Service\NotFoundManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,7 +17,8 @@ class NotFoundManagerTest extends TestCase
 {
     public function testCreateFromRequestPersistsNewNotFound(): void
     {
-        $repository = $this->createMock(NotFoundRepositoryInterface::class);
+        /** @var NotFoundRepositoryInterface $repository */
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())
             ->method('findOneBy')
             ->with(['path' => '/unknown'])
@@ -41,7 +43,8 @@ class NotFoundManagerTest extends TestCase
     public function testRemoveForRedirectDeletesNotFound(): void
     {
         $notFound = new NotFound('/a', '/a');
-        $repository = $this->createMock(NotFoundRepositoryInterface::class);
+        /** @var NotFoundRepositoryInterface $repository */
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())
             ->method('findBy')
             ->with(['path' => '/old', 'host' => 'example.com'])

@@ -8,13 +8,15 @@ use Adeliom\EasyRedirectBundle\Entity\Redirect;
 use Adeliom\EasyRedirectBundle\Repository\RedirectRepositoryInterface;
 use Adeliom\EasyRedirectBundle\Service\RedirectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 
 class RedirectManagerTest extends TestCase
 {
     public function testFindAndUpdateReturnsNullWhenNotFound(): void
     {
-        $repository = $this->createMock(RedirectRepositoryInterface::class);
+        /** @var RedirectRepositoryInterface $repository */
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())
             ->method('findOneBy')
             ->with(['source' => '/missing', 'host' => ''])
@@ -36,7 +38,8 @@ class RedirectManagerTest extends TestCase
     {
         $redirect = new Redirect('/old', '/new');
 
-        $repository = $this->createMock(RedirectRepositoryInterface::class);
+        /** @var RedirectRepositoryInterface $repository */
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())
             ->method('findOneBy')
             ->willReturn($redirect);
