@@ -37,10 +37,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:agence-adeliom/easy-common-bundle.git",
-            "options": {
-                "symlink": true
-            }
+            "url": "git@github.com:agence-adeliom/easy-common-bundle.git"
         }
     ],
     "require-dev": {
