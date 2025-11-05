@@ -109,6 +109,7 @@ easy_redirect:
 ## Authors
 
 - [@arnaud-ritti](https://github.com/arnaud-ritti)
+- [@jeandaviddaviet](https://github.com/JeanDavidDaviet)
 
 
 ## Thanks to
