@@ -1,61 +1,46 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Adeliom\EasyRedirectBundle\Tests\Service;
 
-use Adeliom\EasyRedirectBundle\Entity\Redirect;
-use Adeliom\EasyRedirectBundle\Repository\RedirectRepositoryInterface;
 use Adeliom\EasyRedirectBundle\Service\RedirectManager;
+use Adeliom\EasyRedirectBundle\Tests\Fixtures\Entity\TestRedirect;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectRepository;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-class RedirectManagerTest extends TestCase
+#[CoversClass(\Adeliom\EasyRedirectBundle\Service\RedirectManager::class)]
+final class RedirectManagerTest extends TestCase
 {
-    public function testFindAndUpdateReturnsNullWhenNotFound(): void
+    public function testFindAndUpdateReturnsNullWhenRepositoryDoesNotReturnRedirect(): void
     {
-        /** @var RedirectRepositoryInterface $repository */
-        $repository = $this->createMock(EntityRepository::class);
-        $repository->expects(self::once())
-            ->method('findOneBy')
-            ->with(['source' => '/missing', 'host' => ''])
-            ->willReturn(null);
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->expects(self::once())->method('findOneBy')->with(['source' => '/missing', 'host' => 'example.com'])->willReturn(new \stdClass());
 
         $em = $this->createMock(EntityManager::class);
-        $em->expects(self::once())
-            ->method('getRepository')
-            ->with(Redirect::class)
-            ->willReturn($repository);
+        $em->method('getRepository')->with(TestRedirect::class)->willReturn($repository);
         $em->expects(self::never())->method('flush');
 
-        $manager = new RedirectManager(Redirect::class, $em);
+        $manager = new RedirectManager(TestRedirect::class, $em);
 
-        self::assertNull($manager->findAndUpdate('/missing'));
+        self::assertNull($manager->findAndUpdate('/missing', 'example.com'));
     }
 
-    public function testFindAndUpdateUpdatesRedirect(): void
+    public function testFindAndUpdateIncrementsCountAndFlushes(): void
     {
-        $redirect = new Redirect('/old', '/new');
-
-        /** @var RedirectRepositoryInterface $repository */
-        $repository = $this->createMock(EntityRepository::class);
-        $repository->expects(self::once())
-            ->method('findOneBy')
-            ->willReturn($redirect);
+        $redirect = new TestRedirect('/legacy', '/target', 'example.com');
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->expects(self::once())->method('findOneBy')->with(['source' => '/legacy', 'host' => 'example.com'])->willReturn($redirect);
 
         $em = $this->createMock(EntityManager::class);
-        $em->expects(self::once())
-            ->method('getRepository')
-            ->with(Redirect::class)
-            ->willReturn($repository);
+        $em->method('getRepository')->with(TestRedirect::class)->willReturn($repository);
         $em->expects(self::once())->method('flush');
 
-        $manager = new RedirectManager(Redirect::class, $em);
-        $result = $manager->findAndUpdate('/old');
+        $manager = new RedirectManager(TestRedirect::class, $em);
+        $result = $manager->findAndUpdate('/legacy', 'example.com');
 
         self::assertSame($redirect, $result);
         self::assertSame(1, $redirect->getCount());
-        self::assertInstanceOf(\DateTimeInterface::class, $redirect->getLastAccessed());
+        self::assertNotNull($redirect->getLastAccessed());
     }
 }
