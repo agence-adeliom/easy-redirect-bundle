@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyRedirectBundle\Tests\Service;
 
 use Adeliom\EasyRedirectBundle\Service\NotFoundManager;
 use Adeliom\EasyRedirectBundle\Tests\Fixtures\Entity\TestNotFound;
 use Adeliom\EasyRedirectBundle\Tests\Fixtures\Entity\TestRedirect;
 use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +19,7 @@ final class NotFoundManagerTest extends TestCase
     public function testCreateFromRequestReturnsExistingEntityWithoutPersisting(): void
     {
         $existing = new TestNotFound('/missing', 'https://example.com/missing');
-        $repository = $this->createMock(ObjectRepository::class);
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())->method('findOneBy')->with(['path' => '/missing'])->willReturn($existing);
 
         $em = $this->createMock(EntityManager::class);
@@ -32,7 +34,7 @@ final class NotFoundManagerTest extends TestCase
 
     public function testCreateFromRequestPersistsNewEntity(): void
     {
-        $repository = $this->createMock(ObjectRepository::class);
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())->method('findOneBy')->with(['path' => '/missing'])->willReturn(null);
 
         $em = $this->createMock(EntityManager::class);
@@ -57,7 +59,7 @@ final class NotFoundManagerTest extends TestCase
         $notFoundA = new TestNotFound('/legacy', 'https://example.com/legacy');
         $notFoundB = new TestNotFound('/legacy', 'https://example.com/legacy-2');
 
-        $repository = $this->createMock(ObjectRepository::class);
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())->method('findBy')->with(['path' => '/legacy', 'host' => 'example.com'])->willReturn([$notFoundA, $notFoundB]);
 
         $em = $this->createMock(EntityManager::class);

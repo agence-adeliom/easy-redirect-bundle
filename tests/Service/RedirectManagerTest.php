@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyRedirectBundle\Tests\Service;
 
 use Adeliom\EasyRedirectBundle\Service\RedirectManager;
 use Adeliom\EasyRedirectBundle\Tests\Fixtures\Entity\TestRedirect;
 use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +16,7 @@ final class RedirectManagerTest extends TestCase
 {
     public function testFindAndUpdateReturnsNullWhenRepositoryDoesNotReturnRedirect(): void
     {
-        $repository = $this->createMock(ObjectRepository::class);
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())->method('findOneBy')->with(['source' => '/missing', 'host' => 'example.com'])->willReturn(new \stdClass());
 
         $em = $this->createMock(EntityManager::class);
@@ -29,7 +31,7 @@ final class RedirectManagerTest extends TestCase
     public function testFindAndUpdateIncrementsCountAndFlushes(): void
     {
         $redirect = new TestRedirect('/legacy', '/target', 'example.com');
-        $repository = $this->createMock(ObjectRepository::class);
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())->method('findOneBy')->with(['source' => '/legacy', 'host' => 'example.com'])->willReturn($redirect);
 
         $em = $this->createMock(EntityManager::class);
